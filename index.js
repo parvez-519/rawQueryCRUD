@@ -10,23 +10,6 @@ require("dotenv").config();
 const db = require("./db");
 async function init() {
   try {
-    await db.connect(function (err) {
-      if (err) {
-        console.error("error: " + err.message);
-      }
-
-      let createTable = `create table if not exists student(
-                                  id int primary key auto_increment,
-                                  name varchar(255)not null,
-                                  age tinyint(1) not null default 0
-                              )`;
-
-      db.query(createTable, function (err, results, fields) {
-        if (err) {
-          console.log(err.message);
-        }
-      });
-    });
     console.log("DB initialized.");
     app.use("/", router);
     app.listen(process.env.PORT, () => {
@@ -36,4 +19,5 @@ async function init() {
     console.log(error.message);
   }
 }
+
 init();

@@ -29,7 +29,12 @@ const createDB = async (req, res) => {
         s_id int primary key auto_increment,
         name varchar(255)not null,
         age tinyint(1) not null default 0,
-        d_id int REFERENCES department(dept_id),constraint unique(d_id))`;
+        d_id int REFERENCES department(dept_id),constraint unique(d_id));
+
+        create table if not exists books(
+          book_id int primary key auto_increment,
+          book_name varchar(255)not null,
+          b_id int REFERENCES department(dept_id),constraint unique(b_id))`;
 
     db.query(createTableOne, function (err, results, fields) {
       if (err) {
@@ -56,7 +61,8 @@ const createDB = async (req, res) => {
 const add = async (req, res) => {
   try {
     let query = `INSERT INTO rawquery.department(dept_name) VALUES('${req.body.name}');
-    INSERT INTO rawquery.student(name,age,d_id) VALUES('${req.body.name}',${req.body.age},LAST_INSERT_ID())`;
+    INSERT INTO rawquery.student(name,age,d_id) VALUES('${req.body.name}',${req.body.age},LAST_INSERT_ID());
+    INSERT INTO rawquery.books(book_name,b_id) VALUES('${req.body.book_name}',LAST_INSERT_ID());`
     console.log("----------> ", query.insertId);
     db.query(query, function (err, result, fields) {
       res.status(200).json({
@@ -89,7 +95,7 @@ const addMany = async (req, res) => {
       deptValues.push(dept);
       studentValues.push(student);
     });
-    
+
     console.log();
     let query = `INSERT INTO rawquery.department(dept_name) VALUES ?;
     INSERT INTO rawquery.student(name,age,d_id) VALUES (?,?,LAST_INSERT_ID())`;
@@ -213,7 +219,7 @@ const updateOne = async (req, res) => {
     // SET name = '${req.body.name}', age = ${req.body.age}
     // WHERE id = ${req.body.id};`;
     let query = `UPDATE rawquery.department  INNER JOIN rawquery.student ON dept=${req.body.dept_id} and d_id=${req.body.dept_id} 
-    SET student.name='${req.body.name}',student.age='${req.body.age}'`
+    SET student.name='${req.body.name}',student.age='${req.body.age}'`;
 
     db.query(query, function (err, result, fields) {
       res.status(200).json({
